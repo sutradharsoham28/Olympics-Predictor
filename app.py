@@ -1,4 +1,3 @@
-
 import streamlit as st
 import joblib
 import pandas as pd
@@ -56,21 +55,6 @@ label_encoder = joblib.load('label_encoder.pkl')
 
 # Reconstruct model_features (column names of X_train) to ensure consistency
 # This involves reloading the cleaned data and re-applying the feature dropping steps
-def get_model_features():
-    cleaned_df_temp = pd.read_csv('cleaned_data.csv')
-    # Reconstruct Medal_Type to get the original X before dropping medal columns
-    cleaned_df_temp['Medal_Type'] = None
-    cleaned_df_temp.loc[cleaned_df_temp['Medal_Gold'] == True, 'Medal_Type'] = 'Gold'
-    cleaned_df_temp.loc[cleaned_df_temp['Medal_Silver'] == True, 'Medal_Type'] = 'Silver'
-    cleaned_df_temp.loc[(cleaned_df_temp['Medal_Gold'] == False) & (cleaned_df_temp['Medal_Silver'] == False), 'Medal_Type'] = 'Bronze'
-
-    X_full = cleaned_df_temp.drop('Medal_Type', axis=1)
-    # Drop the leaked columns as done during training
-    X_corrected = X_full.drop(columns=['Medal_Gold', 'Medal_Silver'])
-    return X_corrected.columns.tolist()
-
-model_features = get_model_features()
-
 # --- Preprocessing Function for User Inputs ---
 def preprocess_inputs(user_year, user_population, user_gdp_per_capita, user_season, user_gender, user_categorical_inputs, model_features, scaler, top_categories_map):
     # Initialize a DataFrame with all model_features as columns and one row, all zeros/False
